@@ -63,7 +63,7 @@ static SExp* parse_list(const char** input) {
         }
 
         if (**input == '\0') {
-            fprintf(stderr, "Error: Unmatched opening parenthesis.\n");
+            fprintf(stdout, "Error: Unmatched opening parenthesis.\n");
             // A free_sexp(head) call would be needed here to prevent memory leaks.
             return NULL; 
         }
@@ -74,7 +74,7 @@ static SExp* parse_list(const char** input) {
             current->data.cons.cdr = parse_sexp(input);
             skip_whitespace(input);
             if (**input != ')') {
-                fprintf(stderr, "Error: Expected ')' after dotted pair.\n");
+                fprintf(stdout, "Error: Expected ')' after dotted pair.\n");
                 // Memory cleanup would be needed here.
                 return NULL;
             }
@@ -108,8 +108,7 @@ SExp* sexp(const char* input_str) {
     
     skip_whitespace(&p);
     if (*p != '\0') {
-        fprintf(stderr, "Error: Unexpected trailing characters: %s\n", p);
-        // A free_sexp(result) call would be needed here to prevent memory leaks.
+        fprintf(stdout, "Error: Unexpected trailing characters: %s\n", p);
         return NULL;
     }
 

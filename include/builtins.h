@@ -2,24 +2,24 @@
 #define BUILTINS_H
 
 #include "sexp.h"
-#include <math.h> // For fmod
+#include <math.h>
 #include <string.h>
 
-// Sprint 3: Number Functions [cite: 5]
-SExp* add(SExp* a, SExp* b); // [cite: 11]
-SExp* sub(SExp* a, SExp* b); // [cite: 12]
-SExp* mul(SExp* a, SExp* b); // [cite: 13]
-SExp* divide(SExp* a, SExp* b); // [cite: 14]
-SExp* mod(SExp* a, SExp* b); // [cite: 15]
+// Sprint 3: Number Functions
+SExp* add(SExp* a, SExp* b); 
+SExp* sub(SExp* a, SExp* b); 
+SExp* mul(SExp* a, SExp* b); 
+SExp* divide(SExp* a, SExp* b);
+SExp* mod(SExp* a, SExp* b); 
 
 // Sprint 3: Relational Functions
-SExp* lt(SExp* a, SExp* b);  // [cite: 16]
-SExp* gt(SExp* a, SExp* b);  // [cite: 17]
-SExp* lte(SExp* a, SExp* b); // [cite: 18]
-SExp* gte(SExp* a, SExp* b); // [cite: 19]
+SExp* lt(SExp* a, SExp* b);  
+SExp* gt(SExp* a, SExp* b);  
+SExp* lte(SExp* a, SExp* b); 
+SExp* gte(SExp* a, SExp* b); 
 
-// Sprint 3: Equality and Logical Functions [cite: 20]
-SExp* eq(SExp* a, SExp* b); // [cite: 22]
-SExp* not_op(SExp* s); // [cite: 23]
+// Sprint 3: Equality and Logical Functions 
+SExp* eq(SExp* a, SExp* b);
+SExp* not_op(SExp* s); 
 
-#endif // BUILTINS_H
+#endif 

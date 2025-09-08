@@ -31,7 +31,7 @@ SExp* cons(SExp* car_sexp, SExp* cdr_sexp) {
 
 SExp* car(SExp* s) {
     if (!is_list(s) || is_nil(s)) {
-        fprintf(stderr, "Error: 'car' called on a non-list or empty list.\n");
+        fprintf(stdout, "Error: 'car' called on a non-list or empty list.\n");
         return NIL;
     }
     return s->data.cons.car;
@@ -39,7 +39,7 @@ SExp* car(SExp* s) {
 
 SExp* cdr(SExp* s) { 
     if (!is_list(s) || is_nil(s)) {
-        fprintf(stderr, "Error: 'cdr' called on a non-list or empty list.\n");
+        fprintf(stdout, "Error: 'cdr' called on a non-list or empty list.\n");
         return NIL;
     }
     return s->data.cons.cdr;

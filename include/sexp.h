@@ -46,7 +46,7 @@ SExp* cons(SExp* car_sexp, SExp* cdr_sexp);
 SExp* car(SExp* s);
 SExp* cdr(SExp* s);
 
-// Factory functions for creating atoms
+// functions for creating atoms
 SExp* make_number(double value);
 SExp* make_symbol(const char* text);
 SExp* make_string(const char* text);
@@ -57,7 +57,7 @@ int is_symbol(SExp* s);
 int is_number(SExp* s);
 int is_string(SExp* s);
 int is_list(SExp* s);
-int is_atom(SExp* s); // Helper for Sprint 3
+int is_atom(SExp* s);
 int sexp_to_bool(SExp* s);
 
 #endif // SEXP_H

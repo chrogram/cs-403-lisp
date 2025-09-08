@@ -1,0 +1,90 @@
+--- Sprint 1: Reading and Printing S-Expressions ---
+Parsing Symbol
+Parsed== 'a':: 
+a
+
+Parsing String
+Parsed== '"hello"':: 
+"hello"
+
+Parsing Number
+Parsed== '123':: 
+123
+
+Parsing List
+Parsed== '(a b c)':: 
+(a b c)
+
+Unclosed Parenthesis Test
+Error: Unmatched opening parenthesis.
+Parsed== '(a b c ':: 
+
+
+Parsing Nested List
+Parsed== '((a (789) x) (b (456) y))':: 
+((a (789) x) (b (456) y))
+
+--- Sprint 2: Predicates, Constructors, and Accessors ---
+
+is_symbol Test Cases:
+Is 'a' a symbol? Yes
+Is (1 2) a symbol? No
+
+is_number Test Cases:
+Is '123' a number? Yes
+Is 'a' a number? No
+
+is_list Test Cases:
+Is '(1 2)' a list? Yes
+Is '123' a list? No
+
+is_nil Test Cases:
+Is T a nil? No
+Is nil a nil? Yes
+
+car/cdr Test Cases:
+car of (1 2) is: 1
+car of '123' is: Error: 'car' called on a non-list or empty list.
+nil
+cdr of (1 2) is: (2)
+cdr of (1) is: nil
+cdr of '123' is: Error: 'cdr' called on a non-list or empty list.
+nil
+
+--- Sprint 3: Core Arithmetic and Logic ---
+
+add() Test Cases:
+add(5, 10) -> 	15
+add(15, 20) -> 	35
+
+sub() Test Cases:
+sub(10, 5) -> 	5
+sub(5, 10) -> 	-5
+
+multiply() Test Cases:
+mul(5, 10) -> 	50
+mul(0, 10) -> 	0
+mul(5, 0) -> 	7.5
+
+divide() Test Cases:
+div(10, 5) -> 	2
+div(20, 3) -> 	6.66667
+div(0, 5) -> 	0
+div(5, 0) -> 	DivisionByZero
+
+mod() Test Cases:
+mod(10, 3) -> 	1
+mod(10, 0) -> 	DivisionByZero
+
+Relational Function Test Cases:
+gt(5, 10)  -> 	nil
+gt(10, 5)  -> 	T
+gt(5, 5)  -> 	nil
+gte(10, 5) -> 	nil
+gte(10, 10) -> 	T
+lt(10, 5)  -> 	T
+lte(5, 10) -> 	T
+eq(foo, foo)-> 	T
+eq(foo, bar)-> 	nil
+not(nil)   -> 	T
+not(T)   -> 	nil
