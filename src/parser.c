@@ -17,7 +17,6 @@ static void skip_whitespace(const char** input) {
 static SExp* parse_atom(const char** input) {
     char buffer[256];
     int i = 0;
-    double y = 1.0005;
 
     while (**input && !isspace(**input) && **input != ')' && **input != '(' && i < 255) {
         buffer[i++] = *(*input)++;
@@ -52,53 +51,67 @@ static SExp* parse_list(const char** input) {
         return NIL;
     }
 
-    SExp *head = NULL, *tail = NULL, *current = NULL;
-    head = cons(parse_sexp(input), NIL);
-    current = head;
+    SExp *head = cons(parse_sexp(input), NIL);
+    SExp *current = head;
 
     while (1) {
         skip_whitespace(input);
+
         if (**input == ')') {
             (*input)++; // Skip ')'
-            break;
+            return head;
         }
+
         if (**input == '\0') {
-            // Unmatched parenthesis
-            // Depending on desired error handling, you might want to free memory and return NULL
-            break; 
+            fprintf(stderr, "Error: Unmatched opening parenthesis.\n");
+            // A free_sexp(head) call would be needed here to prevent memory leaks.
+            return NULL; 
         }
 
-        tail = cons(parse_sexp(input), NIL);
-        // current->pair.cdr = tail;
-        current->data.cons.cdr = tail;
-        current = tail;
-    }
+        if (**input == '.') {
+            (*input)++; // Consume '.'
+            skip_whitespace(input);
+            current->data.cons.cdr = parse_sexp(input);
+            skip_whitespace(input);
+            if (**input != ')') {
+                fprintf(stderr, "Error: Expected ')' after dotted pair.\n");
+                // Memory cleanup would be needed here.
+                return NULL;
+            }
+            (*input)++; // Consume ')'
+            return head;
+        }
 
-    return head;
+        SExp* new_cell = cons(parse_sexp(input), NIL);
+        current->data.cons.cdr = new_cell;
+        current = new_cell;
+    }
 }
 
 static SExp* parse_sexp(const char** input) {
-    // printf("here\n");
     skip_whitespace(input);
-    // printf("Current input:: %s\n", *input);
     if (**input == '\0'){
-        // printf("End of input reached unexpectedly.\n");
         return NULL;
     }
     if (**input == '(') {
-        // printf("Parsing list starting at: %s\n", *input);
         return parse_list(input);
     }
     if (**input == '"') {
-        // printf("Parsing string starting at: %s\n", *input);
         return parse_string(input);
     }
-    // printf("Parsing atom starting at: %s\n", *input);
     return parse_atom(input);
 }
 
 SExp* sexp(const char* input_str) {
     const char* p = input_str;
-    // printf("Start Parsing: %s\n", input_str);
-    return parse_sexp(&p);
+    SExp* result = parse_sexp(&p);
+    
+    skip_whitespace(&p);
+    if (*p != '\0') {
+        fprintf(stderr, "Error: Unexpected trailing characters: %s\n", p);
+        // A free_sexp(result) call would be needed here to prevent memory leaks.
+        return NULL;
+    }
+
+    return result;
 }

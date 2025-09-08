@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "sexp.h"
 #include "builtins.h"
 
@@ -59,21 +60,41 @@ int main(int argc, char* argv[]) {
         printf("eq(foo, foo)-> "); print_sexp(eq(sym1, make_symbol("foo"))); printf("\n");
         printf("not(nil)   -> "); print_sexp(not_op(NIL)); printf("\n");
     }
-    // TODO: Implement REPL mode
     else if (mode == 'R') {
-        printf("REPL mode selected.\n");
-        printf("REPL not yet implemented.\n");
+        char input_buffer[2048];
+        printf("Welcome to C-Sexp REPL. Type 'quit' to exit.\n");
+
+        while (1) {
+            printf("> ");
+            if (fgets(input_buffer, sizeof(input_buffer), stdin) == NULL) {
+                printf("\nExiting REPL.\n");
+                break; // Exit on EOF (Ctrl+D)
+            }
+
+            // Remove trailing newline from fgets
+            input_buffer[strcspn(input_buffer, "\n")] = 0;
+
+            if (strcmp(input_buffer, "quit") == 0) {
+                printf("Exiting REPL.\n");
+                break;
+            }
+
+            if (strlen(input_buffer) > 0) {
+                SExp* expression = sexp(input_buffer);
+                if (expression) {
+                    print_sexp(expression);
+                    printf("\n");
+                    
+                } else {
+                    fprintf(stderr, "Error: Could not parse expression.\n");
+                }
+            }
+        }
     } 
     else {
         fprintf(stderr, "Invalid mode. Use 'R' for REPL or 'T' for Tester.\n");
         return 1;
     }
-
-
-
-
-    
-
 
     return 0;
 }
