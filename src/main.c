@@ -56,12 +56,19 @@ int main(int argc, char* argv[]) {
         print_sexp(nested_list);
         printf("\n");
 
+        printf("\nParsing Dotted Pair\n");
+        SExp* dotted_pair = sexp("(a . (b . (c . d)))");
+        printf("Parsed== '(a . (b . (c . d)))':: \n");
+        print_sexp(dotted_pair);
+        printf("\n");
+
 
 
         printf("\n--- Sprint 2: Predicates, Constructors, and Accessors ---\n\n");
         SExp* symbol = make_symbol("a");
         SExp* num = sexp("123");
         SExp* list = sexp("(1 2)");
+        SExp* string = make_string("foo_bar");
         
         // Symbol Test Cases
         printf("is_symbol Test Cases:\n");
@@ -73,6 +80,12 @@ int main(int argc, char* argv[]) {
         printf("is_number Test Cases:\n");
         printf("Is '123' a number? %s\n", is_number(num) ? "Yes" : "No");
         printf("Is 'a' a number? %s\n", is_number(symbol) ? "Yes" : "No");
+        printf("\n");
+
+        // String Test Cases
+        printf("is_string Test Cases:\n");
+        printf("Is \"foo_bar\" a string? %s\n", is_string(string) ? "Yes" : "No");
+        printf("Is 'a' a string? %s\n", is_string(symbol) ? "Yes" : "No");
         printf("\n");
 
         // List Test Cases
@@ -93,9 +106,13 @@ int main(int argc, char* argv[]) {
         printf("\n");
         printf("car of '123' is: ");
         print_sexp(car(num));
-        printf("\n");
+        printf("\n\n");
+
         printf("cdr of (1 2) is: ");
         print_sexp(cdr(list));
+        printf("\n");
+        printf("cdr of (1 2 3) is: ");
+        print_sexp(cdr(sexp("(1 2 3)")));
         printf("\n");
         printf("cdr of (1) is: ");
         print_sexp(cdr(sexp("(1)")));
@@ -107,13 +124,13 @@ int main(int argc, char* argv[]) {
         printf("\n--- Sprint 3: Core Arithmetic and Logic ---\n");
         SExp* num1 = make_number(5);
         SExp* num2 = make_number(10);
-        SExp* num3 = make_number(15);
-        SExp* num4 = make_number(20);
+        SExp* num3 = make_number(1.5);
+        SExp* num4 = make_number(2.25);
         SExp* sym1 = make_symbol("foo");
 
         printf("\nadd() Test Cases:\n");
         printf("add(5, 10) -> \t"); print_sexp(add(num1, num2)); printf("\n");
-        printf("add(15, 20) -> \t"); print_sexp(add(num3, num4)); printf("\n");
+        printf("add(1.5, 2.25) -> \t"); print_sexp(add(num3, num4)); printf("\n");
 
         printf("\nsub() Test Cases:\n");
         printf("sub(10, 5) -> \t"); print_sexp(sub(num2, num1)); printf("\n");
@@ -122,11 +139,11 @@ int main(int argc, char* argv[]) {
         printf("\nmultiply() Test Cases:\n");
         printf("mul(5, 10) -> \t"); print_sexp(mul(num1, num2)); printf("\n");
         printf("mul(0, 10) -> \t"); print_sexp(mul(make_number(0), num2)); printf("\n");
-        printf("mul(5, 0) -> \t"); print_sexp(mul(num1, make_number(1.5))); printf("\n");
+        printf("mul(5, 1.5) -> \t"); print_sexp(mul(num1, make_number(1.5))); printf("\n");
 
         printf("\ndivide() Test Cases:\n");
         printf("div(10, 5) -> \t"); print_sexp(divide(num2, num1)); printf("\n");
-        printf("div(20, 3) -> \t"); print_sexp(divide(num4, make_number(3))); printf("\n");
+        printf("div(2.25, 3) -> \t"); print_sexp(divide(num4, make_number(3))); printf("\n");
         printf("div(0, 5) -> \t"); print_sexp(divide(make_number(0), num1)); printf("\n");
         printf("div(5, 0) -> \t"); print_sexp(divide(num1, make_number(0))); printf("\n");
 
@@ -138,14 +155,22 @@ int main(int argc, char* argv[]) {
         printf("gt(5, 10)  -> \t"); print_sexp(gt(num1, num2)); printf("\n");
         printf("gt(10, 5)  -> \t"); print_sexp(gt(num2, num1)); printf("\n");
         printf("gt(5, 5)  -> \t"); print_sexp(gt(num1, num1)); printf("\n");
+        printf("gt(a, 5) -> \t"); print_sexp(gt(sym1, num1)); printf("\n");
+        printf("gt(5, a) -> \t"); print_sexp(gt(sym1, num1)); printf("\n");
         printf("gte(10, 5) -> \t"); print_sexp(gte(num1, num2)); printf("\n");
         printf("gte(10, 10) -> \t"); print_sexp(gte(num1, num1)); printf("\n");
         printf("lt(10, 5)  -> \t"); print_sexp(lt(num1, num2)); printf("\n");
         printf("lte(5, 10) -> \t"); print_sexp(lte(num1, num2)); printf("\n");
         printf("eq(foo, foo)-> \t"); print_sexp(eq(sym1, make_symbol("foo"))); printf("\n");
         printf("eq(foo, bar)-> \t"); print_sexp(eq(sym1, make_symbol("bar"))); printf("\n");
+        printf("eq(foo, 1)-> \t"); print_sexp(eq(sym1, make_number(5))); printf("\n");
         printf("not(nil)   -> \t"); print_sexp(not_op(NIL)); printf("\n");
         printf("not(T)   -> \t"); print_sexp(not_op(T)); printf("\n");
+
+        printf("\nArithmetic on Non-Numbers Test Cases:\n");
+        printf("add(5, foo) -> \t"); print_sexp(add(num1, sym1)); printf("\n");
+        printf("sub(foo, 5) -> \t"); print_sexp(sub(sym1, num1)); printf("\n");
+
     }
     else if (mode == 'R') {
         char input_buffer[2048];
