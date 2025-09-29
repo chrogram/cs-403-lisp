@@ -1,27 +1,22 @@
-#include "sexp.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include "sexp.h"
 
 // Define the global constants
 SExp* NIL = NULL;
 SExp* T = NULL;
 
-
-
 void initialize_globals() {
-    // A single, unique object for NIL
     NIL = (SExp*)malloc(sizeof(SExp));
     NIL->type = SEXP_NIL;
-
-    // The 'true' constant is represented by the symbol T
     T = (SExp*)malloc(sizeof(SExp));
     T->type = SEXP_SYMBOL;
     T->data.text = (char*)malloc(strlen("T") + 1);
     strcpy(T->data.text, "T");
 }
 
-SExp* cons(SExp* car_sexp, SExp* cdr_sexp) { 
+SExp* cons(SExp* car_sexp, SExp* cdr_sexp) {
     SExp* s = (SExp*)malloc(sizeof(SExp));
     s->type = SEXP_CONS;
     s->data.cons.car = car_sexp;
@@ -31,18 +26,28 @@ SExp* cons(SExp* car_sexp, SExp* cdr_sexp) {
 
 SExp* car(SExp* s) {
     if (!is_list(s) || is_nil(s)) {
-        fprintf(stdout, "Error: 'car' called on a non-list or empty list.\n");
+        fprintf(stdout, "Error: 'car' called on non-list.\n");
         return NIL;
     }
     return s->data.cons.car;
 }
 
-SExp* cdr(SExp* s) { 
+SExp* cdr(SExp* s) {
     if (!is_list(s) || is_nil(s)) {
-        fprintf(stdout, "Error: 'cdr' called on a non-list or empty list.\n");
+        fprintf(stdout, "Error: 'cdr' called on non-list.\n");
         return NIL;
     }
     return s->data.cons.cdr;
+}
+
+// cadr(s) is equivalent to car(cdr(s)) 
+SExp* cadr(SExp* s) {
+    return car(cdr(s));
+}
+
+// caddr(s) is equivalent to car(cdr(cdr(s))) 
+SExp* caddr(SExp* s) {
+    return car(cdr(cdr(s)));
 }
 
 SExp* make_number(double value) {
@@ -53,9 +58,7 @@ SExp* make_number(double value) {
 }
 
 SExp* make_symbol(const char* text) {
-    if (strcmp(text, "nil") == 0 || strcmp(text, "()") == 0) {
-        return NIL;
-    }
+    if (strcmp(text, "nil") == 0 || strcmp(text, "()") == 0) return NIL;
     SExp* s = (SExp*)malloc(sizeof(SExp));
     s->type = SEXP_SYMBOL;
     s->data.text = (char*)malloc(strlen(text) + 1);
@@ -72,10 +75,12 @@ SExp* make_string(const char* text) {
 }
 
 // Predicate implementations
-int is_nil(SExp* s) { return s == NIL; } 
-int is_symbol(SExp* s) { return s->type == SEXP_SYMBOL; } 
-int is_number(SExp* s) { return s->type == SEXP_NUMBER; } 
-int is_string(SExp* s) { return s->type == SEXP_STRING; } 
+int is_nil(SExp* s) { return s == NIL; }
+int is_symbol(SExp* s) { return s->type == SEXP_SYMBOL; }
+int is_number(SExp* s) { return s->type == SEXP_NUMBER; }
+int is_string(SExp* s) { return s->type == SEXP_STRING; }
 int is_list(SExp* s) { return s->type == SEXP_CONS || is_nil(s); }
 int is_atom(SExp* s) { return !is_list(s); }
-int sexp_to_bool(SExp* s) { return !is_nil(s); } 
+int is_lambda(SExp* s) { return s->type == SEXP_LAMBDA; }
+
+void

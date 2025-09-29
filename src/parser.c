@@ -3,6 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "sexp.h"
+#include "parser.h"
 
 SExp* sexp(const char* input_str);
 
