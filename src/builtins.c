@@ -4,7 +4,7 @@
 
 
 
-// Helper to return an error symbol [cite: 29]
+// Helper to return an error symbol 
 static SExp* make_error(const char* msg) {
     return make_symbol(msg);
 }
@@ -22,8 +22,8 @@ SExp* mul(SExp* a, SExp* b) {
     return make_number(a->data.number * b->data.number);
 }
 SExp* divide(SExp* a, SExp* b) {
-    if (!is_number(a) || !is_number(b)) return make_error("Not-a-number"); // [cite: 28]
-    if (b->data.number == 0) return make_error("DivisionByZero"); // [cite: 27]
+    if (!is_number(a) || !is_number(b)) return make_error("Not-a-number"); 
+    if (b->data.number == 0) return make_error("DivisionByZero"); 
     return make_number(a->data.number / b->data.number);
 }
 SExp* mod(SExp* a, SExp* b) {

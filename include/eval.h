@@ -3,10 +3,10 @@
 
 #include "sexp.h"
 
-// The main evaluation function [cite: 5]
+// The main evaluation function
 SExp* eval(SExp* sexp, SExp* env);
 
-// Environment Management [cite: 17]
+// Environment Management
 SExp* create_global_env();
 SExp* set(SExp* symbol, SExp* value, SExp* env);
 SExp* lookup(SExp* symbol, SExp* env);

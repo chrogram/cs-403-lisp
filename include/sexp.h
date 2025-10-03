@@ -27,7 +27,7 @@ struct SExp {
         double number;
         // For SEXP_SYMBOL and SEXP_STRING
         char* text;
-        // For SEXP_LAMBDA [cite: 197, 286]
+        // For SEXP_LAMBDA
         struct {
             SExp* params;
             SExp* body;

@@ -11,27 +11,33 @@ static SExp* apply(SExp* fn_sexp, SExp* args);
 // --- Environment Management ---
 
 SExp* create_global_env() {
-    // Environment is a list of two lists: ( (symbols...) (values...) ) [cite: 22]
     SExp* symbols = NIL;
     SExp* values = NIL;
-    return cons(symbols, values);
+    SExp* frame = cons(symbols, values);
+    // The global environment is a list containing one frame
+    return cons(frame, NIL);
 }
 
 SExp* set(SExp* symbol, SExp* value, SExp* env) {
-    SExp* symbols = car(env);
-    SExp* values = cdr(env);
-    // Add new symbol-value pair to the front of the lists [cite: 28]
-    car(env)->data.cons.car = cons(symbol, symbols)->data.cons.car;
-    cdr(env)->data.cons.car = cons(value, values)->data.cons.car;
-    return value; // Return the evaluated value [cite: 56]
+    // Adds a binding to the most local frame in the environment
+    SExp* frame = car(env);
+    SExp* symbols = car(frame);
+    SExp* values = cdr(frame);
+
+    frame->data.cons.car = cons(symbol, symbols);
+    frame->data.cons.cdr = cons(value, values);
+
+    return value;
 }
 
 SExp* lookup(SExp* symbol, SExp* env) {
-    SExp* parent_env = env;
-    while (!is_nil(parent_env)) {
-        SExp* symbols = car(parent_env);
-        SExp* values = cdr(parent_env);
-        // Traverse the symbol and value lists in parallel [cite: 35]
+    SExp* current_env = env;
+    // Iterate through the list of environment frames (from local to global)
+    while (!is_nil(current_env)) {
+        SExp* frame = car(current_env);
+        SExp* symbols = car(frame);
+        SExp* values = cdr(frame);
+        // Traverse the symbol and value lists in the current frame
         while (!is_nil(symbols)) {
             if (strcmp(car(symbols)->data.text, symbol->data.text) == 0) {
                 return car(values); // Found, return corresponding value
@@ -39,14 +45,11 @@ SExp* lookup(SExp* symbol, SExp* env) {
             symbols = cdr(symbols);
             values = cdr(values);
         }
-        // This is for local environments; not implemented until Sprint 7
-        // For now, it will just check the global env once.
-        break; 
+        current_env = cdr(current_env); // Move to the parent environment
     }
-    // If not found, return the symbol itself [cite: 39]
-    return symbol; 
+    // If not found in any environment, return the symbol itself
+    return symbol;
 }
-
 
 // --- Main Eval Function ---
 
@@ -54,24 +57,18 @@ SExp* eval(SExp* sexp, SExp* env) {
     if (sexp == NULL) return NIL;
 
     switch (sexp->type) {
-        // Atoms evaluate to themselves [cite: 15]
         case SEXP_NIL:
         case SEXP_NUMBER:
         case SEXP_STRING:
-        case SEXP_LAMBDA: // Lambdas are values
+        case SEXP_LAMBDA:
             return sexp;
-
         case SEXP_SYMBOL:
-            // Symbols are looked up in the environment [cite: 13]
             return lookup(sexp, env);
-
         case SEXP_CONS:
-            // Lists are function calls or special forms [cite: 16]
             return eval_list(sexp, env);
     }
     return make_symbol("EvalError: UnknownType");
 }
-
 
 // --- List Evaluation ---
 
@@ -86,7 +83,7 @@ static SExp* eval_list(SExp* list, SExp* env) {
     SExp* fn_sym = car(list);
     SExp* args = cdr(list);
 
-    if (!is_symbol(fn_sym)) { // Handle calls like ((lambda (x) x) 5)
+    if (!is_symbol(fn_sym)) {
         SExp* lambda_obj = eval(fn_sym, env);
         if (is_lambda(lambda_obj)) {
             SExp* evaluated_args = eval_args(args, env);
@@ -95,81 +92,81 @@ static SExp* eval_list(SExp* list, SExp* env) {
         return make_symbol("Error: Not a function");
     }
 
-    // --- Special Forms (arguments are not pre-evaluated) ---
-    
-    // (quote x) -> x 
-    if (strcmp(fn_sym->data.text, "quote") == 0) {
-        return cadr(list);
-    }
-
-    // (set sym val) 
-    if (strcmp(fn_sym->data.text, "set") == 0) {
-        SExp* value = eval(caddr(list), env); // Value is evaluated [cite: 53]
-        return set(cadr(list), value, env);
-    }
-
-    // (if test then else)
+    // Special Forms
+    if (strcmp(fn_sym->data.text, "quote") == 0) return cadr(list);
+    if (strcmp(fn_sym->data.text, "set") == 0) return set(cadr(list), eval(caddr(list), env), env);
     if (strcmp(fn_sym->data.text, "if") == 0) {
         SExp* test_res = eval(cadr(list), env);
-        if (!is_nil(test_res)) {
-            return eval(caddr(list), env); // Correct: Eval 'then' branch
-        } else {
-            return eval(cadddr(list), env); // Correct: Eval 'else' branch
-        }
+        return !is_nil(test_res) ? eval(caddr(list), env) : eval(cadddr(list), env);
     }
-    
-    if (strcmp(fn_sym->data.text, "define") == 0) {
-        SExp* lambda = (SExp*) malloc(sizeof(SExp));
-        lambda->type = SEXP_LAMBDA;
-        lambda->data.lambda.params = caddr(list);
-        lambda->data.lambda.body = car(cdr(cdr(cdr(list))));
-        lambda->data.lambda.env = env; // Lexical scoping
-        return set(cadr(list), lambda, env);
+    // Added 'and' functionality
+    if (strcmp(fn_sym->data.text, "and") == 0) {
+        SExp* res1 = eval(cadr(list), env);
+        // If the first expression is nil, return nil immediately 
+        if (is_nil(res1)) {
+            return NIL;
+        }
+        // Otherwise, the result is the evaluation of the second expression 
+        return eval(caddr(list), env);
     }
 
+    // Added 'or' functionality
+    if (strcmp(fn_sym->data.text, "or") == 0) {
+        SExp* res1 = eval(cadr(list), env);
+        // If the first expression is anything but nil, return T immediately 
+        if (!is_nil(res1)) {
+            return T;
+        }
+        // Otherwise, the result is the evaluation of the second expression
+        return eval(caddr(list), env);
+    }
+    if (strcmp(fn_sym->data.text, "define") == 0) {
+    // This now correctly evaluates the value/expression before setting the variable.
+    return set(cadr(list), eval(caddr(list), env), env);
+}
     if (strcmp(fn_sym->data.text, "lambda") == 0) {
         SExp* lambda = (SExp*) malloc(sizeof(SExp));
         lambda->type = SEXP_LAMBDA;
         lambda->data.lambda.params = cadr(list);
         lambda->data.lambda.body = caddr(list);
-        lambda->data.lambda.env = env;
+        lambda->data.lambda.env = env; // Capture the current environment
         return lambda;
     }
 
-    // --- Regular Function Call (arguments are pre-evaluated) ---
-
-    // Evaluate the function symbol itself to see if it's a lambda [cite: 206]
+    // Regular Function Call
     SExp* fn_obj = eval(fn_sym, env);
-    // Evaluate all arguments before calling the function [cite: 62]
     SExp* evaluated_args = eval_args(args, env);
-    
     return apply(fn_obj, evaluated_args);
 }
-
 
 // --- Apply Function ---
 
 static SExp* apply(SExp* fn_sexp, SExp* args) {
+    // Handle user-defined lambda functions
     if (is_lambda(fn_sexp)) {
-        // This is a simplified environment handling for demonstration.
-        // A full implementation would chain environments.
-        SExp* local_env = create_global_env(); 
-        
+        // Create a new local frame for arguments
+        SExp* local_frame = cons(NIL, NIL);
         SExp* formal_params = fn_sexp->data.lambda.params;
         SExp* actual_args = args;
-        
-        // Bind arguments to parameters in the new local environment [cite: 212]
+
         while(!is_nil(formal_params)) {
-            set(car(formal_params), car(actual_args), local_env);
+            // Add bindings to the new local frame
+            local_frame->data.cons.car = cons(car(formal_params), car(local_frame));
+            local_frame->data.cons.cdr = cons(car(actual_args), cdr(local_frame));
             formal_params = cdr(formal_params);
             actual_args = cdr(actual_args);
         }
+
+        // CORRECTED: Create a new environment by linking the local frame to the function's closure environment
+        SExp* call_env = cons(local_frame, fn_sexp->data.lambda.env);
         
-        // Evaluate the function body in the new environment [cite: 214]
-        return eval(fn_sexp->data.lambda.body, local_env);
+        // Evaluate the function body in this new, extended environment
+        return eval(fn_sexp->data.lambda.body, call_env);
     }
 
     // Handle Built-in functions
+    if (!is_symbol(fn_sexp)) return make_symbol("ApplyError: Not a function symbol");
+    
     const char* op = fn_sexp->data.text;
     SExp* arg1 = car(args);
     SExp* arg2 = cdr(args) != NIL ? car(cdr(args)) : NIL;
@@ -189,5 +186,5 @@ static SExp* apply(SExp* fn_sexp, SExp* args) {
     if (strcmp(op, "lte") == 0) return lte(arg1, arg2);
     if (strcmp(op, "not") == 0) return not_op(arg1);
     
-    return make_symbol("ApplyError: Not a function");
+    return make_symbol("ApplyError: Unknown built-in function");
 }

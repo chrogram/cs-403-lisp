@@ -42,9 +42,6 @@ int main(int argc, char* argv[]) {
     set(make_symbol("lte"), make_symbol("lte"), global_env);
     set(make_symbol("not"), make_symbol("not"), global_env);
 
-    printf("Welcome to the Lisp Interpreter!\n");
-    printf("Enter an expression, or type \"quit\" to exit.\n");
-
     char input_buffer[2048];
 
     if (mode == 'T') {
@@ -132,30 +129,15 @@ int main(int argc, char* argv[]) {
 
 
         // String Test Cases
-
-
         printf("is_string Test Cases:\n");
-
-
         printf("Is \"foo_bar\" a string? %s\n", is_string(string) ? "Yes" : "No");
-
-
         printf("Is 'a' a string? %s\n", is_string(symbol) ? "Yes" : "No");
-
-
         printf("\n");
 
-
-
-
         // List Test Cases
-
         printf("is_list Test Cases:\n");
-
         printf("Is '(1 2)' a list? %s\n", is_list(list) ? "Yes" : "No");
-
         printf("Is '123' a list? %s\n", is_list(num) ? "Yes" : "No");
-
         printf("\n");
 
 
@@ -248,6 +230,8 @@ int main(int argc, char* argv[]) {
         printf("sub(foo, 5)      -> "); print_sexp(sub(sym1, num1)); printf("\n");
 
         printf("\n--- Sprint 5: Eval and Built-In Functions ---\n");
+        printf("(quote hello)                    -> "); print_sexp(eval(sexp("(quote hello)"), global_env)); printf("\n");
+        printf("(quote (+ 1 2))                  -> "); print_sexp(eval(sexp("(quote (+ 1 2))"), global_env)); printf("\n");
         printf("(+ 1 2)                          -> "); print_sexp(eval(sexp("(+ 1 2)"), global_env)); printf("\n");
         printf("(- 2 10)                         -> "); print_sexp(eval(sexp("(- 2 10)"), global_env)); printf("\n");
         printf("(* 6 7)                          -> "); print_sexp(eval(sexp("(* 6 7)"), global_env)); printf("\n");
@@ -265,17 +249,21 @@ int main(int argc, char* argv[]) {
         printf("(not (eq (quote a) (quote b)))   -> "); print_sexp(eval(sexp("(not (eq (quote a) (quote b)))"), global_env)); printf("\n");
         printf("(/ 10 0)                         -> "); print_sexp(eval(sexp("(/ 10 0)"), global_env)); printf("\n");
         printf("(+ 10 (quote a))                 -> "); print_sexp(eval(sexp("(+ 10 (quote a))"), global_env)); printf("\n");
+        printf("(set x 100)                      -> "); print_sexp(eval(sexp("(set x 100)"), global_env)); printf("\n");
+        printf("x                                -> "); print_sexp(eval(sexp("x"), global_env)); printf("\n");
+        printf("(+ x x)                          -> "); print_sexp(eval(sexp("(+ x x)"), global_env)); printf("\n");
 
-        printf("\n--- Sprint 6: Conditionals and Special Forms ---\n");
-        printf("(quote hello)                     -> "); print_sexp(eval(sexp("(quote hello)"), global_env)); printf("\n");
-        printf("(quote (+ 1 2))                   -> "); print_sexp(eval(sexp("(quote (+ 1 2))"), global_env)); printf("\n");
-        printf("(set x 100)                       -> "); print_sexp(eval(sexp("(set x 100)"), global_env)); printf("\n");
-        printf("x                                 -> "); print_sexp(eval(sexp("x"), global_env)); printf("\n");
+
+        printf("\n--- Sprint 6: Short-Circuiting and Conditionals ---\n");
         printf("(if (gt 10 5) 'yes 'no)           -> "); print_sexp(eval(sexp("(if (gt 10 5) 'yes 'no)"), global_env)); printf("\n");
         printf("(if (lt 10 5) 'yes 'no)           -> "); print_sexp(eval(sexp("(if (lt 10 5) 'yes 'no)"), global_env)); printf("\n");
         printf("(if (eq (mod 10 2) 0) 'even 'odd) -> "); print_sexp(eval(sexp("(if (eq (mod 10 2) 0) 'even 'odd)"), global_env)); printf("\n");
+        printf("(and T \"hello\")                   -> "); print_sexp(eval(sexp("(and T \"hello\")"), global_env)); printf("\n");
+        printf("(and nil (/ 1 0))                 -> "); print_sexp(eval(sexp("(and nil (/ 1 0))"), global_env)); printf("\n");
+        printf("(or 123 (/ 1 0))                  -> "); print_sexp(eval(sexp("(or 123 (/ 1 0))"), global_env)); printf("\n");
+        printf("(or nil \"world\")                  -> "); print_sexp(eval(sexp("(or nil \"world\")"), global_env)); printf("\n");
 
-        printf("\n--- Sprint 7: Lambda, Define, and Function Application ---\n");
+        printf("\n--- Sprint 7 and 8: User defined and Lambda Functions ---\n");
         printf("(define square (lambda (n) (* n n))) -> "); print_sexp(eval(sexp("(define square (lambda (n) (* n n)))"), global_env)); printf("\n");
         printf("(square 8)                        -> "); print_sexp(eval(sexp("(square 8)"), global_env)); printf("\n");
         printf("(define power (lambda (b e) (if (eq e 0) 1 (* b (power b (- e 1)))))) -> "); print_sexp(eval(sexp("(define power (lambda (b e) (if (eq e 0) 1 (* b (power b (- e 1))))))"), global_env)); printf("\n");
@@ -291,7 +279,8 @@ int main(int argc, char* argv[]) {
     
     // REPL
     if (mode == 'R') {
-
+        printf("Welcome to the Lisp Interpreter!\n");
+        printf("Enter an expression, or type \"quit\" to exit.\n");
         while (1) {
             printf("> ");
             fflush(stdout);

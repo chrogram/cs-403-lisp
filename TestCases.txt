@@ -51,57 +51,101 @@ Is T a nil? No
 Is nil a nil? Yes
 
 car/cdr Test Cases:
-car of (1 2) is: 1
-car of '123' is: Error: 'car' called on a non-list or empty list.
+car of (1 2)     -> 1
+car of '123'     -> Error: 'car' called on non-list.
 nil
 
-cdr of (1 2) is: (2)
-cdr of (1 2 3) is: (2 3)
-cdr of (1) is: nil
-cdr of '123' is: Error: 'cdr' called on a non-list or empty list.
+cdr of (1 2)     -> (2)
+cdr of (1 2 3)   -> (2 3)
+cdr of (1)       -> nil
+cdr of '123'     -> Error: 'cdr' called on non-list.
 nil
 
 --- Sprint 3: Core Arithmetic and Logic ---
 
 add() Test Cases:
-add(5, 10) -> 	15
-add(1.5, 2.25) -> 	3.75
+add(5, 10)       -> 15
+add(1.5, 2.25)   -> 3.75
 
-sub() Test Cases:
-sub(10, 5) -> 	5
-sub(5, 10) -> 	-5
+subtract() Test Cases:
+sub(10, 5)       -> 5
+sub(5, 10)       -> -5
 
 multiply() Test Cases:
-mul(5, 10) -> 	50
-mul(0, 10) -> 	0
-mul(5, 1.5) -> 	7.5
+mul(5, 10)       -> 50
+mul(0, 10)       -> 0
+mul(5, 1.5)      -> 7.5
 
 divide() Test Cases:
-div(10, 5) -> 	2
-div(2.25, 3) -> 	0.75
-div(0, 5) -> 	0
-div(5, 0) -> 	DivisionByZero
+div(10, 5)       -> 2
+div(2.25, 3)     -> 0.75
+div(0, 5)        -> 0
+div(5, 0)        -> DivisionByZero
 
 mod() Test Cases:
-mod(10, 3) -> 	1
-mod(10, 0) -> 	DivisionByZero
+mod(10, 3)       -> 1
+mod(10, 0)       -> DivisionByZero
 
 Relational Function Test Cases:
-gt(5, 10)  -> 	nil
-gt(10, 5)  -> 	T
-gt(5, 5)  -> 	nil
-gt(a, 5) -> 	Not-a-number
-gt(5, a) -> 	Not-a-number
-gte(10, 5) -> 	nil
-gte(10, 10) -> 	T
-lt(10, 5)  -> 	T
-lte(5, 10) -> 	T
-eq(foo, foo)-> 	T
-eq(foo, bar)-> 	nil
-eq(foo, 1)-> 	nil
-not(nil)   -> 	T
-not(T)   -> 	nil
+gt(5, 10)        -> nil
+gt(10, 5)        -> T
+gt(5, 5)         -> nil
+gt(a, 5)         -> Not-a-number
+gt(5, a)         -> Not-a-number
+gte(10, 5)       -> nil
+gte(10, 10)      -> T
+lt(10, 5)        -> T
+lte(5, 10)       -> T
+eq(foo, foo)     -> T
+eq(foo, bar)     -> nil
+eq(foo, 1)       -> nil
+not(nil)         -> T
+not(T)           -> nil
 
 Arithmetic on Non-Numbers Test Cases:
-add(5, foo) -> 	Not-a-number
-sub(foo, 5) -> 	Not-a-number
+add(5, foo)      -> Not-a-number
+sub(foo, 5)      -> Not-a-number
+
+--- Sprint 5: Eval and Built-In Functions ---
+(quote hello)                    -> hello
+(quote (+ 1 2))                  -> (+ 1 2)
+(+ 1 2)                          -> 3
+(- 2 10)                         -> -8
+(* 6 7)                          -> 42
+(/ 100 3)                        -> 33.3333
+(mod 10 3)                       -> 1
+(eq (quote a) (quote a))         -> T
+(eq (quote a) (quote b))         -> nil
+(gt 10 5)                        -> T
+(gte 5 5)                        -> T
+(lt 10 11)                       -> T
+(lte 2 1)                        -> nil
+(not nil)                        -> T
+(not T)                          -> nil
+(+ 10 (* 2 5))                   -> 20
+(not (eq (quote a) (quote b)))   -> T
+(/ 10 0)                         -> DivisionByZero
+(+ 10 (quote a))                 -> Not-a-number
+(set x 100)                      -> 100
+x                                -> 100
+(+ x x)                          -> 200
+
+--- Sprint 6: Short-Circuiting and Conditionals ---
+(if (gt 10 5) 'yes 'no)           -> 'yes
+(if (lt 10 5) 'yes 'no)           -> 'no
+(if (eq (mod 10 2) 0) 'even 'odd) -> 'even
+(and T "hello")                   -> "hello"
+(and nil (/ 1 0))                 -> nil
+(or 123 (/ 1 0))                  -> T
+(or nil "world")                  -> "world"
+
+--- Sprint 7 and 8: User defined and Lambda Functions ---
+(define square (lambda (n) (* n n))) -> #<function>
+(square 8)                        -> 64
+(define power (lambda (b e) (if (eq e 0) 1 (* b (power b (- e 1)))))) -> #<function>
+(power 2 10)                      -> 1024
+((lambda (x) (+ x 10)) 5)         -> 15
+(set my-adder (lambda (a b) (+ a b))) -> #<function>
+(my-adder 50 25)                  -> 75
+(define get-five (lambda () 5))   -> #<function>
+(get-five)                        -> 5
