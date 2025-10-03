@@ -83,4 +83,3 @@ int is_list(SExp* s) { return s->type == SEXP_CONS || is_nil(s); }
 int is_atom(SExp* s) { return !is_list(s); }
 int is_lambda(SExp* s) { return s->type == SEXP_LAMBDA; }
 
-void

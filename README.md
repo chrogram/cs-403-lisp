@@ -1,4 +1,4 @@
-# Sprint 1 [2 3] Assignment
+# Final Submission
  Chris Phornroekngam
 
 ## Folder Structure
@@ -6,18 +6,20 @@
 ```
 ├── include/
 │   ├── builtins.h
+│   ├── eval.h
 │   ├── parser.h
 │   ├── printer.h
 │   └── sexp.h
 ├── src/
 │   ├── builtins.c
+│   ├── eval.c
 │   ├── main.c
 │   ├── parser.c
 │   ├── printer.c
 │   └── sexp.c
-├── TestCases.txt
 ├── Makefile
 └── README.md
+
 ```
 
 `include/` - Header files are included in this directory. This contains the function prototypes, global variables, like NIL and T for true, as well as the S-Expression struct.
@@ -40,7 +42,7 @@ gcc -Wall -g -Iinclude src/main.c src/parser.c src/printer.c src/sexp.c src/buil
 
 ## Test Plan
 
-The tests will be performed in `main.c`. This is because while the REPL mode is working and can correctly save and parse S-Expression into variable, we cannot as of yet invoke system level functions. So, for now, the functions will be tested in `main.c`. 
+The tests will be performed in `main.c`. 
 
 The tests can be divided up into 3 sections for each sprint.
 
@@ -171,4 +173,4 @@ sub(foo, 5) -> 	Not-a-number
 ```
 
 ## Current Bugs/Problems
-The biggest issue with this current program is that the REPL program can only parse S-Expression and can't do any operations with them. I originally had issues with hanging/unclosed parenthesis, but they seem to all be sorted out. Quote notation still needs to be added. I have not ran into an issue that would require me adding this functionality, but I suspect when I flesh out my eval() function more this will be required.
+The only problem we were able to find with this program is the lack of garbage collection. This was never implemented because we were never instructed to do so. Since this was built without garbage collection in mind, adding it is likely not trival and will require a serious rework.

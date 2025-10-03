@@ -97,19 +97,20 @@ static SExp* eval_list(SExp* list, SExp* env) {
 
     // --- Special Forms (arguments are not pre-evaluated) ---
     
-    // (quote x) -> x [cite: 51]
+    // (quote x) -> x 
     if (strcmp(fn_sym->data.text, "quote") == 0) {
         return cadr(list);
     }
 
-    // (set sym val) [cite: 52]
+    // (set sym val) 
     if (strcmp(fn_sym->data.text, "set") == 0) {
         SExp* value = eval(caddr(list), env); // Value is evaluated [cite: 53]
         return set(cadr(list), value, env);
     }
 
-    // (if test then else) [cite: 130]
+    // (if test then else) 
     if (strcmp(fn_sym->data.text, "if") == 0) {
+        printf("made inside IF!!!\n");
         SExp* test_res = eval(cadr(list), env);
         if (!is_nil(test_res)) {
             return eval(caddr(list), env); // Eval 'then' branch [cite: 132]
@@ -118,7 +119,6 @@ static SExp* eval_list(SExp* list, SExp* env) {
         }
     }
     
-    // (define name params body) [cite: 182]
     if (strcmp(fn_sym->data.text, "define") == 0) {
         SExp* lambda = (SExp*) malloc(sizeof(SExp));
         lambda->type = SEXP_LAMBDA;
@@ -128,7 +128,6 @@ static SExp* eval_list(SExp* list, SExp* env) {
         return set(cadr(list), lambda, env);
     }
 
-    // (lambda params body) [cite: 280]
     if (strcmp(fn_sym->data.text, "lambda") == 0) {
         SExp* lambda = (SExp*) malloc(sizeof(SExp));
         lambda->type = SEXP_LAMBDA;
@@ -186,7 +185,9 @@ static SExp* apply(SExp* fn_sexp, SExp* args) {
     if (strcmp(op, "mod") == 0) return mod(arg1, arg2);
     if (strcmp(op, "eq") == 0) return eq(arg1, arg2);
     if (strcmp(op, "gt") == 0) return gt(arg1, arg2);
+    if (strcmp(op, "gte") == 0) return gte(arg1, arg2);
     if (strcmp(op, "lt") == 0) return lt(arg1, arg2);
+    if (strcmp(op, "lte") == 0) return lte(arg1, arg2);
     if (strcmp(op, "not") == 0) return not_op(arg1);
     
     return make_symbol("ApplyError: Not a function");
