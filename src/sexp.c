@@ -49,6 +49,9 @@ SExp* cadr(SExp* s) {
 SExp* caddr(SExp* s) {
     return car(cdr(cdr(s)));
 }
+SExp* cadddr(SExp* s) {
+    return car(cdr(cdr(cdr(s))));
+}
 
 SExp* make_number(double value) {
     SExp* s = (SExp*)malloc(sizeof(SExp));

@@ -104,12 +104,6 @@ int main(int argc, char* argv[]) {
         printf("\n");
 
 
-
-
-
-
-
-
         printf("\n--- Sprint 2: Predicates, Constructors, and Accessors ---\n\n");
         SExp* symbol = make_symbol("a");
         SExp* num = sexp("123");
@@ -273,12 +267,25 @@ int main(int argc, char* argv[]) {
         printf("(+ 10 (quote a))                 -> "); print_sexp(eval(sexp("(+ 10 (quote a))"), global_env)); printf("\n");
 
         printf("\n--- Sprint 6: Conditionals and Special Forms ---\n");
-        printf("(quote hello)");
-        printf("(quote (+ 1 2))");
-        printf("(set x 100)");
-        printf("if (gt 10 5)");
+        printf("(quote hello)                     -> "); print_sexp(eval(sexp("(quote hello)"), global_env)); printf("\n");
+        printf("(quote (+ 1 2))                   -> "); print_sexp(eval(sexp("(quote (+ 1 2))"), global_env)); printf("\n");
+        printf("(set x 100)                       -> "); print_sexp(eval(sexp("(set x 100)"), global_env)); printf("\n");
+        printf("x                                 -> "); print_sexp(eval(sexp("x"), global_env)); printf("\n");
+        printf("(if (gt 10 5) 'yes 'no)           -> "); print_sexp(eval(sexp("(if (gt 10 5) 'yes 'no)"), global_env)); printf("\n");
+        printf("(if (lt 10 5) 'yes 'no)           -> "); print_sexp(eval(sexp("(if (lt 10 5) 'yes 'no)"), global_env)); printf("\n");
+        printf("(if (eq (mod 10 2) 0) 'even 'odd) -> "); print_sexp(eval(sexp("(if (eq (mod 10 2) 0) 'even 'odd)"), global_env)); printf("\n");
 
-        
+        printf("\n--- Sprint 7: Lambda, Define, and Function Application ---\n");
+        printf("(define square (lambda (n) (* n n))) -> "); print_sexp(eval(sexp("(define square (lambda (n) (* n n)))"), global_env)); printf("\n");
+        printf("(square 8)                        -> "); print_sexp(eval(sexp("(square 8)"), global_env)); printf("\n");
+        printf("(define power (lambda (b e) (if (eq e 0) 1 (* b (power b (- e 1)))))) -> "); print_sexp(eval(sexp("(define power (lambda (b e) (if (eq e 0) 1 (* b (power b (- e 1))))))"), global_env)); printf("\n");
+        printf("(power 2 10)                      -> "); print_sexp(eval(sexp("(power 2 10)"), global_env)); printf("\n");
+        printf("((lambda (x) (+ x 10)) 5)         -> "); print_sexp(eval(sexp("((lambda (x) (+ x 10)) 5)"), global_env)); printf("\n");
+        printf("(set my-adder (lambda (a b) (+ a b))) -> "); print_sexp(eval(sexp("(set my-adder (lambda (a b) (+ a b)))"), global_env)); printf("\n");
+        printf("(my-adder 50 25)                  -> "); print_sexp(eval(sexp("(my-adder 50 25)"), global_env)); printf("\n");
+        printf("(define get-five (lambda () 5))   -> "); print_sexp(eval(sexp("(define get-five (lambda () 5))"), global_env)); printf("\n");
+        printf("(get-five)                        -> "); print_sexp(eval(sexp("(get-five)"), global_env)); printf("\n");
+
 
     }
     

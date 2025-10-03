@@ -108,14 +108,13 @@ static SExp* eval_list(SExp* list, SExp* env) {
         return set(cadr(list), value, env);
     }
 
-    // (if test then else) 
+    // (if test then else)
     if (strcmp(fn_sym->data.text, "if") == 0) {
-        printf("made inside IF!!!\n");
         SExp* test_res = eval(cadr(list), env);
         if (!is_nil(test_res)) {
-            return eval(caddr(list), env); // Eval 'then' branch [cite: 132]
+            return eval(caddr(list), env); // Correct: Eval 'then' branch
         } else {
-            return eval(car(cdr(cdr(list))), env); // Eval 'else' branch [cite: 133]
+            return eval(cadddr(list), env); // Correct: Eval 'else' branch
         }
     }
     

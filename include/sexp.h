@@ -53,7 +53,7 @@ SExp* cdr(SExp* s);
 // Helper accessors for list elements 
 SExp* cadr(SExp* s);
 SExp* caddr(SExp* s);
-
+SExp* cadddr(SExp* s);
 // Factory functions for creating atoms
 SExp* make_number(double value);
 SExp* make_symbol(const char* text);
