@@ -32,7 +32,7 @@ int main(int argc, char* argv[]) {
     set(make_symbol("isString"), make_symbol("isString"), global_env);
     set(make_symbol("isList"), make_symbol("isList"), global_env);
     set(make_symbol("isNil"), make_symbol("isNil"), global_env);
-    set(make_symbol("isCons"), make_symbol("is-cons"), global_env);
+    set(make_symbol("isCons"), make_symbol("isCons"), global_env);
 
 
     set(make_symbol("add"), make_symbol("add"), global_env);
