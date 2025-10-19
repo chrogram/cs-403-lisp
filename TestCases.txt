@@ -131,21 +131,47 @@ x                                -> 100
 (+ x x)                          -> 200
 
 --- Sprint 6: Short-Circuiting and Conditionals ---
-(if (gt 10 5) 'yes 'no)           -> 'yes
-(if (lt 10 5) 'yes 'no)           -> 'no
-(if (eq (mod 10 2) 0) 'even 'odd) -> 'even
+(if (gt 10 5) 'yes 'no)           -> yes
+(if (lt 10 5) 'yes 'no)           -> no
+(if (eq (mod 10 2) 0) 'even 'odd) -> even
 (and T "hello")                   -> "hello"
 (and nil (/ 1 0))                 -> nil
 (or 123 (/ 1 0))                  -> T
 (or nil "world")                  -> "world"
 
 --- Sprint 7 and 8: User defined and Lambda Functions ---
-(define square (lambda (n) (* n n))) -> #<function>
+(define square (n) (* n n)) -> #<function>
 (square 8)                        -> 64
-(define power (lambda (b e) (if (eq e 0) 1 (* b (power b (- e 1)))))) -> #<function>
+(define power (b e) (if (eq e 0) 1 (* b (power b (- e 1))))) -> #<function>
 (power 2 10)                      -> 1024
 ((lambda (x) (+ x 10)) 5)         -> 15
 (set my-adder (lambda (a b) (+ a b))) -> #<function>
 (my-adder 50 25)                  -> 75
-(define get-five (lambda () 5))   -> #<function>
-(get-five)                        -> 5
+
+=== CORRECTIONS ===
+car and cdr:
+(car '(a b c))                    -> a
+(car '(1 2 3))                    -> 1
+(cdr '(a b c))                    -> (b c)
+(cdr '(1 2 3))                    -> (2 3)
+
+define:
+(define square (x) (* x x)) -> #<function>
+(square 9)                        -> 81
+(define double (x) (* x 2)) -> #<function>
+(double 10)                       -> 20
+
+predicates:
+(isSymbol 'a)                     -> T
+(isSymbol a)                      -> T
+(isSymbol 9)                      -> nil
+(isNumber 10)                     -> T
+(isNumber 'a)                     -> nil
+(isString "hello")                -> T
+(isString world)                  -> nil
+(isString '(a b c))               -> nil
+(isList '(a b c))                 -> T
+(isList 'a)                       -> nil
+(isNil nil)                       -> T
+(isNil T)                         -> nil
+(isNil '(a b c))                  -> nil

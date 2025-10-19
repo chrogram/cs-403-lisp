@@ -92,38 +92,69 @@ static SExp* eval_list(SExp* list, SExp* env) {
         return make_symbol("Error: Not a function");
     }
 
-    // Special Forms
+    // --- Special Forms ---
     if (strcmp(fn_sym->data.text, "quote") == 0) return cadr(list);
+    
     if (strcmp(fn_sym->data.text, "set") == 0) return set(cadr(list), eval(caddr(list), env), env);
+
+    if (strcmp(fn_sym->data.text, "let") == 0) return set(cadr(list), eval(caddr(list), env), env);
+    
     if (strcmp(fn_sym->data.text, "if") == 0) {
         SExp* test_res = eval(cadr(list), env);
         return !is_nil(test_res) ? eval(caddr(list), env) : eval(cadddr(list), env);
     }
-    // Added 'and' functionality
+    
     if (strcmp(fn_sym->data.text, "and") == 0) {
         SExp* res1 = eval(cadr(list), env);
-        // If the first expression is nil, return nil immediately 
-        if (is_nil(res1)) {
-            return NIL;
-        }
-        // Otherwise, the result is the evaluation of the second expression 
+        if (is_nil(res1)) return NIL;
         return eval(caddr(list), env);
     }
 
-    // Added 'or' functionality
     if (strcmp(fn_sym->data.text, "or") == 0) {
         SExp* res1 = eval(cadr(list), env);
-        // If the first expression is anything but nil, return T immediately 
-        if (!is_nil(res1)) {
-            return T;
-        }
-        // Otherwise, the result is the evaluation of the second expression
+        if (!is_nil(res1)) return T;
         return eval(caddr(list), env);
     }
+
+    if (strcmp(fn_sym->data.text, "begin") == 0) {
+        SExp* expressions = args;
+        SExp* result = NIL;
+        while (!is_nil(expressions)) {
+            result = eval(car(expressions), env);
+            expressions = cdr(expressions);
+        }
+        return result; // Return the result of the last expression
+    }
+
     if (strcmp(fn_sym->data.text, "define") == 0) {
-    // This now correctly evaluates the value/expression before setting the variable.
-    return set(cadr(list), eval(caddr(list), env), env);
-}
+        SExp* name = cadr(list);
+        SExp* value_or_params = caddr(list);
+
+        // Function definition: (define name (params...) ...body)
+        if (is_list(value_or_params)) {
+            SExp* params = value_or_params;
+            SExp* body_expressions = cdr(cdr(cdr(list))); // Replaced cdddr
+            SExp* body = NIL;
+
+            if (is_nil(cdr(body_expressions))) {
+                body = car(body_expressions); // Single body expression
+            } else {
+                body = cons(make_symbol("begin"), body_expressions); // Implicit begin
+            }
+            
+            SExp* lambda = (SExp*) malloc(sizeof(SExp));
+            lambda->type = SEXP_LAMBDA;
+            lambda->data.lambda.params = params;
+            lambda->data.lambda.body = body;
+            lambda->data.lambda.env = env; // Capture lexical scope
+
+            return set(name, lambda, env);
+
+        } else { // Variable definition: (define name value)
+            return set(name, eval(value_or_params, env), env);
+        }
+    }
+    
     if (strcmp(fn_sym->data.text, "lambda") == 0) {
         SExp* lambda = (SExp*) malloc(sizeof(SExp));
         lambda->type = SEXP_LAMBDA;
@@ -133,7 +164,7 @@ static SExp* eval_list(SExp* list, SExp* env) {
         return lambda;
     }
 
-    // Regular Function Call
+    // --- Regular Function Call ---
     SExp* fn_obj = eval(fn_sym, env);
     SExp* evaluated_args = eval_args(args, env);
     return apply(fn_obj, evaluated_args);
@@ -174,17 +205,29 @@ static SExp* apply(SExp* fn_sexp, SExp* args) {
     if (strcmp(op, "car") == 0) return car(arg1);
     if (strcmp(op, "cdr") == 0) return cdr(arg1);
     if (strcmp(op, "cons") == 0) return cons(arg1, arg2);
+
+    // Predicates
+    if (strcmp(op, "isSymbol") == 0) return is_symbol(arg1) ? T : NIL;
+    if (strcmp(op, "isNumber") == 0) return is_number(arg1) ? T : NIL;
+    if (strcmp(op, "isString") == 0) return is_string(arg1) ? T : NIL;
+    if (strcmp(op, "isList") == 0) return (is_cons(arg1) || is_nil(arg1)) ? T : NIL;
+    if (strcmp(op, "isNil") == 0) return is_nil(arg1) ? T : NIL;
+    if (strcmp(op, "isCons") == 0) return is_cons_op(arg1);
+
+    // Arithmetic
     if (strcmp(op, "add") == 0 || strcmp(op, "+") == 0) return add(arg1, arg2);
     if (strcmp(op, "sub") == 0 || strcmp(op, "-") == 0) return sub(arg1, arg2);
     if (strcmp(op, "mul") == 0 || strcmp(op, "*") == 0) return mul(arg1, arg2);
     if (strcmp(op, "div") == 0 || strcmp(op, "/") == 0) return divide(arg1, arg2);
     if (strcmp(op, "mod") == 0) return mod(arg1, arg2);
+
+    // Relational/Logical
     if (strcmp(op, "eq") == 0) return eq(arg1, arg2);
     if (strcmp(op, "gt") == 0) return gt(arg1, arg2);
     if (strcmp(op, "gte") == 0) return gte(arg1, arg2);
     if (strcmp(op, "lt") == 0) return lt(arg1, arg2);
     if (strcmp(op, "lte") == 0) return lte(arg1, arg2);
     if (strcmp(op, "not") == 0) return not_op(arg1);
-    
+
     return make_symbol("ApplyError: Unknown built-in function");
 }

@@ -94,6 +94,27 @@ static SExp* parse_sexp(const char** input) {
     if (**input == '\0'){
         return NULL;
     }
+
+    // --- NEW LOGIC START ---
+    // Check for the single-quote notation
+    if (**input == '\'') {
+        (*input)++; // Consume the ' character
+
+        // 1. Create the "quote" symbol
+        SExp* quote_symbol = make_symbol("quote");
+
+        // 2. Recursively parse the next S-expression
+        SExp* quoted_expression = parse_sexp(input);
+
+        // 3. Build the new list: (quote <quoted_expression>)
+        //    which is: (cons 'quote' (cons <quoted_expression> 'nil'))
+        SExp* list_content = cons(quoted_expression, NIL);
+        SExp* final_list = cons(quote_symbol, list_content);
+
+        return final_list;
+    }
+    // --- NEW LOGIC END ---
+
     if (**input == '(') {
         return parse_list(input);
     }

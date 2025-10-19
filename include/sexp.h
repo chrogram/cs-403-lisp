@@ -61,6 +61,7 @@ SExp* make_string(const char* text);
 
 // Sprint 2: Predicates / Type Checkers
 int is_nil(SExp* s);
+int is_cons(SExp* s);
 int is_symbol(SExp* s);
 int is_number(SExp* s);
 int is_string(SExp* s);

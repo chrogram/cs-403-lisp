@@ -21,5 +21,5 @@ SExp* gte(SExp* a, SExp* b);
 // Sprint 3: Equality and Logical Functions 
 SExp* eq(SExp* a, SExp* b);
 SExp* not_op(SExp* s); 
-
+SExp* is_cons_op(SExp* arg);
 #endif 

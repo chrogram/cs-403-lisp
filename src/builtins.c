@@ -63,3 +63,7 @@ SExp* eq(SExp* a, SExp* b) {
 SExp* not_op(SExp* s) {
     return is_nil(s) ? T : NIL;
 }
+
+SExp* is_cons_op(SExp* arg) {
+    return is_cons(arg) ? T : NIL;
+}

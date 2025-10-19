@@ -40,7 +40,7 @@ make
 If for any reason the makefile does not work, it can alternatively be compiled using this command:
 
 ```
-gcc -Wall -g -Iinclude src/main.c src/parser.c src/printer.c src/sexp.c src/builtins.c -o c-lisp
+gcc -Wall -g -Iinclude src/main.c src/parser.c src/printer.c src/sexp.c src/builtins.c src/eval.c -o c-lisp
 ```
 
 ## Test Plan
@@ -66,6 +66,14 @@ In this sprint, we will test conditionals to ensure we are able to branch off. T
 
 ### Sprint 7 and 8: User Defined and Lambda Functions
 Our last two sprints will test both user defined functions as well as lambda functions. We will test this by first creating simply mathematical user defined functions. Lambda will need to be invoked here to perform these operations. Then will we call these funcitons to ensure they have been saved and work. One thing to note, when a function is successfully defined, it will return `#<function>`.
+
+### CORRECTIONS:
+`car` and `cdr` have been successfully implemented on the REPL. I do not think this is a limitation but you will have to run it with quote notation like: `car '(a b c)` or `cdr '(a b c)`. I believe this is not a limitation since in Lisp, without the quote, it would be treated as a symbol.
+
+I have successfully implemented the `define` keyword without using lambda's.
+
+
+
 
 ### Running Tests:
 

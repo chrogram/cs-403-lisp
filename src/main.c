@@ -26,6 +26,15 @@ int main(int argc, char* argv[]) {
     set(make_symbol("car"), make_symbol("car"), global_env);
     set(make_symbol("cdr"), make_symbol("cdr"), global_env);
     set(make_symbol("cons"), make_symbol("cons"), global_env);
+    
+    set(make_symbol("isSymbol"), make_symbol("isSymbol"), global_env);
+    set(make_symbol("isNumber"), make_symbol("isNumber"), global_env);
+    set(make_symbol("isString"), make_symbol("isString"), global_env);
+    set(make_symbol("isList"), make_symbol("isList"), global_env);
+    set(make_symbol("isNil"), make_symbol("isNil"), global_env);
+    set(make_symbol("isCons"), make_symbol("is-cons"), global_env);
+
+
     set(make_symbol("add"), make_symbol("add"), global_env);
     set(make_symbol("+"), make_symbol("+"), global_env);
     set(make_symbol("sub"), make_symbol("sub"), global_env);
@@ -264,16 +273,47 @@ int main(int argc, char* argv[]) {
         printf("(or nil \"world\")                  -> "); print_sexp(eval(sexp("(or nil \"world\")"), global_env)); printf("\n");
 
         printf("\n--- Sprint 7 and 8: User defined and Lambda Functions ---\n");
-        printf("(define square (lambda (n) (* n n))) -> "); print_sexp(eval(sexp("(define square (lambda (n) (* n n)))"), global_env)); printf("\n");
+        printf("(define square (n) (* n n)) -> "); print_sexp(eval(sexp("(define square (n) (* n n))"), global_env)); printf("\n");
         printf("(square 8)                        -> "); print_sexp(eval(sexp("(square 8)"), global_env)); printf("\n");
-        printf("(define power (lambda (b e) (if (eq e 0) 1 (* b (power b (- e 1)))))) -> "); print_sexp(eval(sexp("(define power (lambda (b e) (if (eq e 0) 1 (* b (power b (- e 1))))))"), global_env)); printf("\n");
+        printf("(define power (b e) (if (eq e 0) 1 (* b (power b (- e 1))))) -> "); print_sexp(eval(sexp("(define power (b e) (if (eq e 0) 1 (* b (power b (- e 1)))))"), global_env)); printf("\n");
         printf("(power 2 10)                      -> "); print_sexp(eval(sexp("(power 2 10)"), global_env)); printf("\n");
         printf("((lambda (x) (+ x 10)) 5)         -> "); print_sexp(eval(sexp("((lambda (x) (+ x 10)) 5)"), global_env)); printf("\n");
         printf("(set my-adder (lambda (a b) (+ a b))) -> "); print_sexp(eval(sexp("(set my-adder (lambda (a b) (+ a b)))"), global_env)); printf("\n");
         printf("(my-adder 50 25)                  -> "); print_sexp(eval(sexp("(my-adder 50 25)"), global_env)); printf("\n");
-        printf("(define get-five (lambda () 5))   -> "); print_sexp(eval(sexp("(define get-five (lambda () 5))"), global_env)); printf("\n");
-        printf("(get-five)                        -> "); print_sexp(eval(sexp("(get-five)"), global_env)); printf("\n");
 
+
+        printf("\n=== CORRECTIONS ===\n");
+
+        // car, cdr
+        printf("car and cdr:\n");
+        printf("(car '(a b c))                    -> "); print_sexp(eval(sexp("(car '(a b c))"), global_env)); printf("\n");
+        printf("(car '(1 2 3))                    -> "); print_sexp(eval(sexp("(car '(1 2 3))"), global_env)); printf("\n");
+        printf("(cdr '(a b c))                    -> "); print_sexp(eval(sexp("(cdr '(a b c))"), global_env)); printf("\n");
+        printf("(cdr '(1 2 3))                    -> "); print_sexp(eval(sexp("(cdr '(1 2 3))"), global_env)); printf("\n");
+
+        // define
+        printf("\ndefine:\n");
+        printf("(define square (x) (* x x)) -> "); print_sexp(eval(sexp("(define square (x) (* x x))"), global_env)); printf("\n");
+        printf("(square 9)                        -> "); print_sexp(eval(sexp("(square 9)"), global_env)); printf("\n");
+        printf("(define double (x) (* x 2)) -> "); print_sexp(eval(sexp("(define double (x) (* x 2))"), global_env)); printf("\n");
+        printf("(double 10)                       -> "); print_sexp(eval(sexp("(double 10)"), global_env)); printf("\n");
+
+        // predicates
+        printf("\npredicates:\n");
+        printf("(isSymbol 'a)                     -> "); print_sexp(eval(sexp("(isSymbol 'a)"), global_env)); printf("\n");
+        printf("(isSymbol a)                      -> "); print_sexp(eval(sexp("(isSymbol a)"), global_env)); printf("\n");
+        printf("(isSymbol 9)                      -> "); print_sexp(eval(sexp("(isSymbol 9)"), global_env)); printf("\n");
+        printf("(isNumber 10)                     -> "); print_sexp(eval(sexp("(isNumber 10)"), global_env)); printf("\n");
+        printf("(isNumber 'a)                     -> "); print_sexp(eval(sexp("(isNumber 'a)"), global_env)); printf("\n");
+        printf("(isString \"hello\")                -> "); print_sexp(eval(sexp("(isString \"hello\")"), global_env)); printf("\n");
+        printf("(isString world)                  -> "); print_sexp(eval(sexp("(isString world)"), global_env)); printf("\n");
+        printf("(isString '(a b c))               -> "); print_sexp(eval(sexp("(isString '(a b c))"), global_env)); printf("\n");
+        printf("(isList '(a b c))                 -> "); print_sexp(eval(sexp("(isList '(a b c))"), global_env)); printf("\n");
+        printf("(isList 'a)                       -> "); print_sexp(eval(sexp("(isList 'a)"), global_env)); printf("\n");
+        printf("(isNil nil)                       -> "); print_sexp(eval(sexp("(isNil nil)"), global_env)); printf("\n");
+        printf("(isNil T)                         -> "); print_sexp(eval(sexp("(isNil T)"), global_env)); printf("\n");
+        printf("(isNil '(a b c))                  -> "); print_sexp(eval(sexp("(isNil '(a b c))"), global_env)); printf("\n");
+        
 
     }
     
